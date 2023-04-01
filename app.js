@@ -7,15 +7,9 @@ const app = express();
 const hostname = "127.0.0.1";
 const port = 8888;
 
-
 dotenv.config({path:'./config.env'})
-const uri = process.env.uri
 
-mongoose.connect(uri).then(()=>{
-    console.log("connection successfull")
-}).catch((e)=>{
-    console.log(e);
-})
+require('./db/conn')
 
 app.get("/",(req,res)=>{
     res.send("This is the Home page.")
