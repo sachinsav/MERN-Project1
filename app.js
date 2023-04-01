@@ -1,9 +1,9 @@
 express = require('express')
 const mongoose = require('mongoose')
 const dotenv = require('dotenv')
+const User = require('./models/user')
 
 const app = express();
-
 const hostname = "127.0.0.1";
 const port = 8888;
 
