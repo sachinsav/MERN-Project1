@@ -1,18 +1,20 @@
 express = require('express')
 const mongoose = require('mongoose')
+const dotenv = require('dotenv')
 
 const app = express();
+
 const hostname = "127.0.0.1";
 const port = 8888;
 
 
-const pwd = encodeURIComponent("MONGO@123");
-const uri = `mongodb+srv://sachin954:${pwd}@cluster0.iw6lrmo.mongodb.net/?retryWrites=true&w=majority`;
+dotenv.config({path:'./config.env'})
+const uri = process.env.uri
 
 mongoose.connect(uri).then(()=>{
     console.log("connection successfull")
-}).catch(()=>{
-    console.log("got some error");
+}).catch((e)=>{
+    console.log(e);
 })
 
 app.get("/",(req,res)=>{
