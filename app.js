@@ -1,30 +1,23 @@
-express = require('express')
 const mongoose = require('mongoose')
 const dotenv = require('dotenv')
 const User = require('./models/user')
-
+const Route = require('./router/route')
+const express = require('express')
 const app = express();
+
 const hostname = "127.0.0.1";
 const port = 8888;
 
 dotenv.config({path:'./config.env'})
+app.use(express.json())
 
+// make connection
 require('./db/conn')
 
-app.get("/",(req,res)=>{
-    res.send("This is the Home page.")
-})
+//all routing related things
 
-app.get("/about",(req,res)=>{
-    res.send("This is the About page.")
-})
+app.use(Route)
 
-app.get("/signin",(req,res)=>{
-    res.send("This is the Signin page.")
-})
-app.get("/signup",(req,res)=>{
-    res.send("This is the Signup page.")
-})
 
 
 
