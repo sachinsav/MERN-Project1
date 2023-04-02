@@ -1,4 +1,5 @@
 const express = require('express')
+const User = require('../models/user')
 
 const route = express.Router()
 
@@ -18,8 +19,26 @@ route.get("/signup",(req,res)=>{
 })
 
 route.post('/register',(req,res)=>{
-    console.log(req.body)
-    res.send({msg:"Okay"})
+    const {name, email, phone, work, password, cpassword} = req.body
+    if(!name || !email || !phone || !work || !password || !cpassword){
+            return res.status(422).json({msg:"Please fill all the form fields"})
+    }
+
+    User.findOne({email:email}).then((userExist)=>{
+        if(userExist){
+            return res.status(422).json({msg:"User already exist, please enter some other email address"})
+        }
+        const user = new User({name, email, phone, work, password, cpassword})
+        user.save().then(()=>{
+            return res.status(200).json({msg:"User got registered successfully"})
+        }).catch((err)=>{
+            return res.status(500).json({msg:"Failed to registered"})
+        })
+
+    }).catch((e)=>{
+        console.log(e)
+        return res.status(500).json({msg:"Some error occured"})
+    })
 })
 
 

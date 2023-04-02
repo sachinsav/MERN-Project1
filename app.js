@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const dotenv = require('dotenv')
-const User = require('./models/user')
+
 const Route = require('./router/route')
 const express = require('express')
 const app = express();
@@ -17,8 +17,6 @@ require('./db/conn')
 //all routing related things
 
 app.use(Route)
-
-
 
 
 
