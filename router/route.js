@@ -18,12 +18,15 @@ route.get("/signup",(req,res)=>{
     res.send("This is the Signup page.")
 })
 
+//promises
+/*
 route.post('/register',(req,res)=>{
+    
     const {name, email, phone, work, password, cpassword} = req.body
     if(!name || !email || !phone || !work || !password || !cpassword){
             return res.status(422).json({msg:"Please fill all the form fields"})
     }
-
+    
     User.findOne({email:email}).then((userExist)=>{
         if(userExist){
             return res.status(422).json({msg:"User already exist, please enter some other email address"})
@@ -39,6 +42,30 @@ route.post('/register',(req,res)=>{
         console.log(e)
         return res.status(500).json({msg:"Some error occured"})
     })
+})
+*/
+route.post('/register', async (req, res)=>{
+    console.log("Async started..")
+    const {name, email, phone, work, password, cpassword} = req.body
+    if(!name || !email || !phone || !work || !password || !cpassword){
+            return res.status(422).json({msg:"Please fill all the form fields"})
+    }
+    try{
+    const userExist = await User.findOne({email:email})
+    if(userExist){
+        return res.status(422).json({msg:"User already exist, please use a different email id"})
+    }
+
+    const user = new User({name, email, phone, work, password, cpassword})
+    await user.save()
+    res.status(200).json("User registered successfully")
+
+    }catch(e){
+        console.log(e)
+        res.status(500).json({msg:e})
+    }
+
+
 })
 
 
