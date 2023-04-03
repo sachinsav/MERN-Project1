@@ -1,5 +1,6 @@
 const express = require('express')
 const User = require('../models/user')
+const bcryptjs = require('bcryptjs')
 
 const route = express.Router()
 
@@ -48,6 +49,9 @@ route.post('/register', async (req, res)=>{
     if(!name || !email || !phone || !work || !password || !cpassword){
             return res.status(422).json({msg:"Please fill all the form fields"})
     }
+    if(password!=cpassword){
+        return res.status(422).json({msg:"Password and confirm password should be same"})
+    }
     try{
     const userExist = await User.findOne({email:email})
     if(userExist){
@@ -77,7 +81,9 @@ route.get('/signin',async (req, res) => {
         if(!user){
             return res.status(200).json({msg:"User does not exist"})
         }
-        if(password == user.password){
+        const isMatch = await bcryptjs.compare(password, user.password)
+        console.log(isMatch)
+        if(isMatch){
             return res.status(200).json({msg:"User logged in successfully"})
         }else{
             return res.status(200).json({msg:"Invalid Credential"})
