@@ -11,9 +11,7 @@ route.get("/about",(req,res)=>{
     res.send("This is the About page.")
 })
 
-route.get("/signin",(req,res)=>{
-    res.send("This is the Signin page.")
-})
+
 route.get("/signup",(req,res)=>{
     res.send("This is the Signup page.")
 })
@@ -68,7 +66,7 @@ route.post('/register', async (req, res)=>{
 
 })
 
-route.post('/signin',async (req, res) => {
+route.get('/signin',async (req, res) => {
     const {email, password} = req.body
     if(!email || !password){
         return res.status(422).json({msg:"Please fill all field"})
