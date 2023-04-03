@@ -68,5 +68,26 @@ route.post('/register', async (req, res)=>{
 
 })
 
+route.post('/signin',async (req, res) => {
+    const {email, password} = req.body
+    if(!email || !password){
+        return res.status(422).json({msg:"Please fill all field"})
+    }
+    try{
+        const user = await User.findOne({email:email})
+        if(!user){
+            return res.status(200).json({msg:"User does not exist"})
+        }
+        if(password == user.password){
+            return res.status(200).json({msg:"User logged in successfully"})
+        }else{
+            return res.status(200).json({msg:"Invalid Credential"})
+        }
+    }catch(e){
+        return res.status(400).json({msg:e})
+    }
+
+})
+
 
 module.exports = route
