@@ -56,6 +56,7 @@ route.post('/register', async (req, res)=>{
 
     const user = new User({name, email, phone, work, password, cpassword})
     await user.save()
+    
     res.status(200).json("User registered successfully")
 
     }catch(e){
