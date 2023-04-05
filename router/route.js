@@ -84,6 +84,12 @@ route.get('/signin',async (req, res) => {
         const isMatch = await bcryptjs.compare(password, user.password)
         console.log(isMatch)
         if(isMatch){
+            const token = await user.generateAuthToken()
+            res.cookie("jwtoken",token,{
+                expires: new Date(Date.now()+5*60*1000),
+                httpOnly:true
+            })
+            console.log(token)
             return res.status(200).json({msg:"User logged in successfully"})
         }else{
             return res.status(200).json({msg:"Invalid Credential"})
