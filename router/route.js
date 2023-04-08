@@ -44,8 +44,12 @@ route.post('/register',(req,res)=>{
 })
 */
 route.post('/register', async (req, res)=>{
+    console.log("hello")
     console.log("Async started..")
+    //res.set('Access-Control-Allow-Origin', 'http://localhost:3001/signup');
+    
     const {name, email, phone, work, password, cpassword} = req.body
+
     if(!name || !email || !phone || !work || !password || !cpassword){
             return res.status(422).json({msg:"Please fill all the form fields"})
     }
@@ -60,8 +64,8 @@ route.post('/register', async (req, res)=>{
 
     const user = new User({name, email, phone, work, password, cpassword})
     await user.save()
-    
-    res.status(200).json("User registered successfully")
+    res.status(200)
+    return res.json({msg:"User registered successfully"})
 
     }catch(e){
         console.log(e)

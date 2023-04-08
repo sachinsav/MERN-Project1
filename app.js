@@ -4,9 +4,12 @@ const dotenv = require('dotenv')
 const Route = require('./router/route')
 const express = require('express')
 const app = express();
+const cors = require('cors');
 
-const hostname = "127.0.0.1";
-const port = 8888;
+app.use(cors())
+
+const hostname = "localhost";
+const port = 3000;
 
 dotenv.config({path:'./config.env'})
 app.use(express.json())
