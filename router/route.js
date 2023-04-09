@@ -1,19 +1,24 @@
 const express = require('express')
 const User = require('../models/user')
 const bcryptjs = require('bcryptjs')
-
+const Authenticate = require('../middleware/authenticate')
 const route = express.Router()
+
+
 
 route.get("/",(req,res)=>{
     res.send("This is the Home page.")
 })
 
-route.get("/about",(req,res)=>{
-    res.send("This is the About page.")
+route.get("/about",Authenticate ,(req,res)=>{
+    res.status(200).json(req.user)
+})
+route.get("/getData", Authenticate, (req,res)=>{
+    res.status(200).json(req.user)
 })
 
-
-route.get("/signup",(req,res)=>{
+route.get("/signup", (req,res)=>{
+    
     res.send("This is the Signup page.")
 })
 
@@ -75,7 +80,7 @@ route.post('/register', async (req, res)=>{
 
 })
 
-route.get('/signin',async (req, res) => {
+route.post('/signin',async (req, res) => {
     const {email, password} = req.body
     if(!email || !password){
         return res.status(422).json({msg:"Please fill all field"})
@@ -83,20 +88,22 @@ route.get('/signin',async (req, res) => {
     try{
         const user = await User.findOne({email:email})
         if(!user){
-            return res.status(200).json({msg:"User does not exist"})
+            return res.status(422).json({msg:"User does not exist"})
         }
         const isMatch = await bcryptjs.compare(password, user.password)
         console.log(isMatch)
+        console.log("Cooookie2")
+        let token="";
         if(isMatch){
-            const token = await user.generateAuthToken()
+            token = await user.generateAuthToken()
             res.cookie("jwtoken",token,{
-                expires: new Date(Date.now()+5*60*1000),
-                httpOnly:true
+                expires: new Date(Date.now() + 5*60*1000),  
+                httpOnly: true
             })
             console.log(token)
-            return res.status(200).json({msg:"User logged in successfully"})
+            return res.status(200).json({msg:"User logged in successfully", token:token})
         }else{
-            return res.status(200).json({msg:"Invalid Credential"})
+            return res.status(422).json({msg:"Invalid Credential"})
         }
     }catch(e){
         return res.status(400).json({msg:e})

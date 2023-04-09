@@ -1,7 +1,10 @@
 import React, { useState } from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
+import Cookies from 'universal-cookie';
 
 const Signin = () => {
+  const navigate = useNavigate()
+  const cookies = new Cookies();
 
   const [user, setUser] = useState({
     email:"",
@@ -13,6 +16,33 @@ const Signin = () => {
     key= e.target.name;
     val= e.target.value;
     setUser({...user, [key]:val})
+  }
+
+  const handleLogin = async (e) => {
+    e.preventDefault()
+    const {email, password} = user
+
+    const res = await fetch("http://localhost:3000/signin",{
+      method:"POST",
+      headers:{
+        'Content-Type':'application/json'
+      },
+      body: JSON.stringify({
+        email, password
+      })
+
+    })
+    const data = await res.json()
+    if(res.status === 200){
+      console.log("login successfull")
+      cookies.set("jwtoken", data.token)
+      window.alert(data.msg)
+      navigate("/")
+    }else{
+      console.log("login failed")
+      window.alert(data.msg)
+    }
+
   }
   return (
     <>
@@ -55,7 +85,7 @@ const Signin = () => {
                   
 
                   <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
-                    <button type="button" class="btn btn-primary btn-lg">Login</button>
+                    <button type="button" class="btn btn-primary btn-lg" onClick={handleLogin}>Login</button>
                     
                   </div>
 

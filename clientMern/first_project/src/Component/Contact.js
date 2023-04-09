@@ -1,6 +1,39 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 const Contact = () => {
+
+
+    
+    const [userData, setuserData] = useState({name:"", email:""})
+    const getData = async ()=>{
+        const res = await fetch('http://localhost:3000/getData',{
+            method: "GET",
+      headers:{
+        Accept:"application/json",
+        "Content-Type":"application/json"
+      },
+      credentials: "include"
+        })
+        console.log("jj")
+        const data = await res.json()
+        console.log(res)
+        console.log(data)
+        if(res.status===200){
+            
+            setuserData(data)
+        }
+        
+    }
+    let key, value;
+    const handleInput = (e) => {
+        key = e.target.name;
+        value = e.target.value;
+        setuserData({...userData, [key]:value})
+    }
+
+    useEffect( () => {
+        getData()
+    }, [])
   return (
     <>
 
@@ -25,7 +58,7 @@ const Contact = () => {
                     <div className="col-md-6">
                         <div className="md-form mb-0">
                         <label for="name" className="">Your name</label>
-                            <input type="text" id="name" name="name" className="form-control"/>
+                            <input type="text" id="name" name="name" value={userData.name} onChange={handleInput} className="form-control"/>
                             
                         </div>
                     </div>
@@ -33,7 +66,7 @@ const Contact = () => {
                     <div className="col-md-6">
                         <div className="md-form mb-0">
                         <label for="email" className="">Your email</label>
-                            <input type="text" id="email" name="email" className="form-control"/>
+                            <input type="text" id="email" name="email" value={userData.email} onClick={handleInput} className="form-control"/>
                             
                         </div>
                     </div>
