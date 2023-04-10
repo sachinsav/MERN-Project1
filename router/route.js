@@ -2,6 +2,7 @@ const express = require('express')
 const User = require('../models/user')
 const bcryptjs = require('bcryptjs')
 const Authenticate = require('../middleware/authenticate')
+const jwt = require('jsonwebtoken')
 const route = express.Router()
 
 
@@ -21,7 +22,10 @@ route.get("/signup", (req,res)=>{
     
     res.send("This is the Signup page.")
 })
-
+route.get("/logout", async (req, res) => {
+    res.clearCookie('jwtoken', {path: '/'})
+    res.status(200).json({msg:'user logout sueccessfully'})
+})
 //promises
 /*
 route.post('/register',(req,res)=>{
@@ -48,6 +52,22 @@ route.post('/register',(req,res)=>{
     })
 })
 */
+route.post('/saveComment', async (req, res) => {
+    console.log("hello")
+    const token = req.cookies.jwtoken
+    const {name, email, subject, msg} = req.body
+    if(!name || !email || !subject || !msg){
+        return res.status(422).json({msg:"All field are neccessary"})
+    }
+    const verifyToken = jwt.verify(token, process.env.SECRET_KEY)
+    const user = await User.findOne({_id:verifyToken._id})
+    if(user){
+        const resSaveCommnet = await user.addComment({name, email, subject, msg})
+        await user.save()
+        res.status(200).json({msg:"User comment added successfully"})
+    }
+
+})
 route.post('/register', async (req, res)=>{
     console.log("hello")
     console.log("Async started..")

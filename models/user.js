@@ -33,6 +33,26 @@ userSchema = new mongoose.Schema({
                 required: true
             }
         }
+    ],
+    comments:[
+        {
+            name:{
+                type:String,
+                required: true
+            },
+            email:{
+                type:String,
+                required: true
+            },
+            subject:{
+                type:String,
+                required: true
+            },
+            msg:{
+                type:String,
+                required: true
+            },
+        }
     ]
 })
 
@@ -56,7 +76,17 @@ userSchema.methods.generateAuthToken = async function() {
     }
 
 }
-
+userSchema.methods.addComment = async function({name, email, subject, msg}) {
+    try {
+        console.log("addcomment inside")
+        this.comments = this.comments.concat({name, email, subject, msg})
+        await this.save()
+        return this.comments
+    } catch (error) {
+        console.log(error)
+        console.log("in error")
+    }
+}
 const User = mongoose.model("User",userSchema)
 
 module.exports = User

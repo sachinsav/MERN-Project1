@@ -1,10 +1,12 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import Cookies from 'universal-cookie';
+import { UserContext } from '../App';
 
 const Signin = () => {
   const navigate = useNavigate()
   const cookies = new Cookies();
+  const {state, dispatch} = useContext(UserContext)
 
   const [user, setUser] = useState({
     email:"",
@@ -35,6 +37,7 @@ const Signin = () => {
     const data = await res.json()
     if(res.status === 200){
       console.log("login successfull")
+      dispatch({type:"USER", islogin: true})
       cookies.set("jwtoken", data.token)
       window.alert(data.msg)
       navigate("/")

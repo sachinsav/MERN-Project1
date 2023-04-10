@@ -4,7 +4,7 @@ const Contact = () => {
 
 
     
-    const [userData, setuserData] = useState({name:"", email:""})
+    const [userData, setuserData] = useState({name:"", email:"", subject:"", msg:""})
     const getData = async ()=>{
         const res = await fetch('http://localhost:3000/getData',{
             method: "GET",
@@ -14,13 +14,12 @@ const Contact = () => {
       },
       credentials: "include"
         })
-        console.log("jj")
         const data = await res.json()
         console.log(res)
-        console.log(data)
+       
         if(res.status===200){
             
-            setuserData(data)
+            setuserData({...userData, name:data.name, email: data.email})
         }
         
     }
@@ -34,6 +33,34 @@ const Contact = () => {
     useEffect( () => {
         getData()
     }, [])
+
+    const sendComment = async (e) => {
+        e.preventDefault()
+        console.log("saveComment")
+        const {name, email, subject, msg} = userData
+        const res = await fetch("http://localhost:3000/saveComment", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            credentials:"include",
+            body: JSON.stringify({
+                name, email, subject, msg
+            })
+        }
+        
+        )
+        console.log(res)
+        if(res.status===200){
+            alert("Comment posted successfully");
+            setuserData({...userData, subject:"", msg:""})
+
+        }else{
+            alert("Some error Occured")
+        }
+    }
+
+
   return (
     <>
 
@@ -49,7 +76,7 @@ const Contact = () => {
 
        
         <div className="col-md-9 mb-md-0 mb-5">
-            <form id="contact-form" name="contact-form" action="mail.php" method="POST">
+            <form id="contact-form" name="contact-form" method="POST">
 
                
                 <div className="row">
@@ -78,7 +105,7 @@ const Contact = () => {
                     <div className="col-md-12">
                         <div className="md-form mb-0">
                         <label for="subject" className="">Subject</label>
-                            <input type="text" id="subject" name="subject" className="form-control"/>
+                            <input type="text" id="subject" name="subject" value={userData.subject} onChange={handleInput} className="form-control"/>
                             
                         </div>
                     </div>
@@ -93,19 +120,19 @@ const Contact = () => {
 
                         <div className="md-form">
                         <label for="message">Your message</label>
-                            <textarea type="text" id="message" name="message" rows="2" className="form-control md-textarea"></textarea>
+                            <textarea type="text" id="message" name="msg" rows="2" value={userData.msg} onChange={handleInput} className="form-control md-textarea"></textarea>
                             
                         </div>
 
                     </div>
                 </div>
-            
-
+                
+                <div className="text-center text-md-left">
+                <button type="button" className="btn btn-primary" onClick={sendComment}>Send2</button>
+            </div>
             </form>
 
-            <div className="text-center text-md-left">
-                <a className="btn btn-primary" onclick="document.getElementById('contact-form').submit();">Send</a>
-            </div>
+            
             <div className="status"></div>
         </div>
  
